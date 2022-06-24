@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Questions } from "../data/Questions";
 
 const Quiz = () => {
@@ -7,14 +8,12 @@ const Quiz = () => {
   const [questionNumber, setQuestionNumber] = useState(0);
   const [score, setScore] = useState(0);
 
+  const navigate = useNavigate();
   const name = localStorage.getItem("name");
-  console.log(name);
 
   useEffect(() => {
     setQuestions(Questions);
   }, []);
-
-  console.log(questions);
 
   const handleOptClicked = (isCorrect) => {
     if (isCorrect) {
@@ -24,8 +23,19 @@ const Quiz = () => {
     if (questionNumber + 1 < questions.length) {
       setQuestionNumber(questionNumber + 1);
     } else {
-        setShowResults(true)
+      setShowResults(true);
     }
+  };
+
+  const handleBtnExit = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
+  const handleBtnRestart = () => {
+    setScore(0);
+    setQuestionNumber(0);
+    setShowResults(false);
   };
 
   return (
@@ -51,6 +61,20 @@ const Quiz = () => {
             <p className="my-4 text-center text-sm text-gray-500">
               {score} de {questions.length} correctas
             </p>
+            <div class="space-x-4 bg-gray-100 py-4 text-center">
+              <button
+                onClick={() => handleBtnExit()}
+                class="inline-block rounded-md bg-red-500 px-10 py-2 font-semibold text-red-100 shadow-md duration-75 hover:bg-red-400"
+              >
+                Salir
+              </button>
+              <button
+                onClick={() => handleBtnRestart()}
+                class="inline-block rounded-md bg-green-500 px-6 py-2 font-semibold text-green-100 shadow-md duration-75 hover:bg-green-400"
+              >
+                Reintentar
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -58,16 +82,18 @@ const Quiz = () => {
           <div className="container">
             <div className="text-center mt-2">
               <h1 className="text-2xl text-slate-700 font-bold leading-normal mb-1 uppercase">
-                Hola, {name ? name : "Amig@"}
+                Hola, {name}
               </h1>
             </div>
             <div className="w-full text-center mt-20">
               <div className="flex justify-center lg:pt-4 pt-8 pb-0">
                 <div className="p-3 text-center">
                   <span className="text-xl font-bold block uppercase tracking-wide text-slate-700">
-                    {questionNumber + 1} - {questions?.length}
+                    {questionNumber + 1}
                   </span>
-                  <span className="text-sm text-slate-400">Pregunta N°</span>
+                  <span className="text-sm text-slate-400">
+                    Pregunta - {questions?.length}
+                  </span>
                 </div>
                 <div className="p-3 text-center">
                   <span className="text-xl font-bold block uppercase tracking-wide text-slate-700">
@@ -113,7 +139,10 @@ const Quiz = () => {
               </div>
             </div>
             <div className="flex items-center justify-center mt-5">
-              <button className="flex px-3 py-2 bg-red-500 mr-1 text-white font-semibold rounded">
+              <button
+                onClick={() => handleBtnExit()}
+                className="flex px-3 py-2 bg-red-500 mr-1 text-white font-semibold rounded"
+              >
                 <span className="ml-1">Finalizar</span>
               </button>
             </div>
